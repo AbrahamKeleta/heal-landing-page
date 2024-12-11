@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heal - Your AI Therapy Companion</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 
 
     <link rel="icon" type="image/webp" href="icon.webp">
+    <link rel="preload" href="https://unpkg.com/aos@2.3.1/dist/aos.js" as="script">
+
 
     <style>
         .bg-primary { background-color: #4A8B7C; }
@@ -240,37 +242,53 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize AOS with a try-catch block
-            try {
+        // Function to initialize AOS
+        function initAOS() {
+            if (typeof AOS !== 'undefined') {
                 AOS.init({
                     duration: 1000,
                     easing: 'ease-in-out',
                     once: true,
                     mirror: false,
-                    disable: 'mobile' // Optionally disable on mobile for better performance
-                });
-            } catch (e) {
-                console.error('Error initializing AOS:', e);
-                // Fallback: Remove AOS attributes if initialization fails
-                document.querySelectorAll('[data-aos]').forEach(el => {
-                    el.removeAttribute('data-aos');
+                    useClassNames: true,
+                    initClassName: 'aos-init',
+                    animatedClassName: 'aos-animate',
+                    disable: function() {
+                        return window.innerWidth < 768; // Disable on mobile
+                    }
                 });
             }
+        }
+
+        // Try multiple initialization points
+        document.addEventListener('DOMContentLoaded', initAOS);
+        window.addEventListener('load', initAOS);
+
+        // Fallback initialization
+        setTimeout(initAOS, 2000);
+
+        // Handle dynamic content and page changes
+        document.addEventListener('aos:in', function(e) {
+            console.log('animated in', e.detail);
         });
 
-        // Refresh AOS when all content is loaded
-        window.addEventListener('load', function() {
-            AOS.refresh();
-        });
+        // Refresh on scroll for Chrome/Firefox
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            }, 100);
+        }, { passive: true });
 
-        // Refresh AOS on viewport resize for better responsiveness
-        window.addEventListener('resize', function() {
-            AOS.refresh();
-        });
+        // Force refresh for Chrome
+        setTimeout(function() {
+            window.dispatchEvent(new Event('scroll'));
+        }, 500);
     </script>
 </body>
 </html>
