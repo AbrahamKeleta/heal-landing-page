@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heal - Your AI Therapy Companion</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+
+
     <link rel="icon" type="image/webp" href="icon.webp">
 
     <style>
@@ -240,11 +242,34 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        AOS.init({
-            duration: 1000,
-            easing: 'ease-in-out',
-            once: true,
-            mirror: false
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS with a try-catch block
+            try {
+                AOS.init({
+                    duration: 1000,
+                    easing: 'ease-in-out',
+                    once: true,
+                    mirror: false,
+                    disable: 'mobile' // Optionally disable on mobile for better performance
+                });
+            } catch (e) {
+                console.error('Error initializing AOS:', e);
+                // Fallback: Remove AOS attributes if initialization fails
+                document.querySelectorAll('[data-aos]').forEach(el => {
+                    el.removeAttribute('data-aos');
+                });
+            }
+        });
+
+        // Refresh AOS when all content is loaded
+        window.addEventListener('load', function() {
+            AOS.refresh();
+        });
+
+        // Refresh AOS on viewport resize for better responsiveness
+        window.addEventListener('resize', function() {
+            AOS.refresh();
         });
     </script>
 </body>
