@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heal - Your AI Therapy Companion</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
 
@@ -240,37 +240,38 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-wKz9Jx8H2jCawXZ9yA+YUbhD/duchLICD/qBHS2v8+ YL4+uU+8GpNmqx39XReQF" crossorigin="anonymous"></script>
     <script>
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize AOS with a try-catch block
-            try {
-                AOS.init({
-                    duration: 1000,
-                    easing: 'ease-in-out',
-                    once: true,
-                    mirror: false,
-                    disable: 'mobile' // Optionally disable on mobile for better performance
-                });
-            } catch (e) {
-                console.error('Error initializing AOS:', e);
-                // Fallback: Remove AOS attributes if initialization fails
-                document.querySelectorAll('[data-aos]').forEach(el => {
-                    el.removeAttribute('data-aos');
-                });
-            }
-        });
+        // Initialize AOS only after script is fully loaded
+        if (typeof AOS !== 'undefined') {
+            // Initial load
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    AOS.init({
+                        duration: 1000,
+                        easing: 'ease-in-out',
+                        once: true,
+                        mirror: false,
+                        startEvent: 'load' // Change initialization trigger
+                    });
+                } catch (e) {
+                    console.error('Error initializing AOS:', e);
+                }
+            });
 
-        // Refresh AOS when all content is loaded
-        window.addEventListener('load', function() {
-            AOS.refresh();
-        });
-
-        // Refresh AOS on viewport resize for better responsiveness
-        window.addEventListener('resize', function() {
-            AOS.refresh();
-        });
+            // Backup initialization
+            window.addEventListener('load', function() {
+                if (!AOS.initialized) {
+                    AOS.init();
+                }
+                AOS.refresh();
+            });
+        } else {
+            console.warn('AOS not loaded. Removing animation attributes...');
+            document.querySelectorAll('[data-aos]').forEach(el => {
+                el.removeAttribute('data-aos');
+            });
+        }
     </script>
 </body>
 </html>
